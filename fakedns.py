@@ -158,12 +158,13 @@ class DNSHandler(socketserver.BaseRequestHandler):
             records += record
         return records
 
+
 if __name__ == '__main__':
     # Minimal configuration - allow to pass IP in configuration
     if len(sys.argv) > 1:
         IP = sys.argv[1]
     host, port = '', 53
-    server = socketserver.ThreadingUDPServer((host, port), DNSHandler)
+    server = socketserver.ForkingUDPServer((host, port), DNSHandler)
     print('\033[36mStarted DNS server.\033[39m')
     try:
         server.serve_forever()
