@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # (c) 2014 Patryk Hes
+# (c) 2017 Peter Wagenaar
+import hashlib
 import socketserver
 import sys
 
 DNS_HEADER_LENGTH = 12
-# TODO make some DNS database with IPs connected to regexs
-IP = '192.168.1.1'
 
 
 class DNSHandler(socketserver.BaseRequestHandler):
@@ -151,18 +151,13 @@ class DNSHandler(socketserver.BaseRequestHandler):
             # In case of QTYPE=A and QCLASS=IN, RDLENGTH=4.
             record += b'\x00\x04'
             # RDATA - in case of QTYPE=A and QCLASS=IN, it's IPv4 address.
-            record += b''.join(map(
-                lambda x: bytes([int(x)]),
-                IP.split('.')
-            ))
+            # Calculate a random but deterministic answer
+            record += hashlib.md5(b''.join(question['name'])).digest()[:4]
             records += record
         return records
 
 
 if __name__ == '__main__':
-    # Minimal configuration - allow to pass IP in configuration
-    if len(sys.argv) > 1:
-        IP = sys.argv[1]
     host, port = '', 53
     server = socketserver.ForkingUDPServer((host, port), DNSHandler)
     print('\033[36mStarted DNS server.\033[39m')
