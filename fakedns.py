@@ -41,7 +41,8 @@ class DNSHandler(socketserver.BaseRequestHandler):
         )
         socket.sendto(response, self.client_address)
 
-    def dns_extract_questions(self, data):
+    @staticmethod
+    def dns_extract_questions(data):
         """
         Extracts question section from DNS request data.
         See http://tools.ietf.org/html/rfc1035 4.1.2. Question section format.
@@ -75,7 +76,8 @@ class DNSHandler(socketserver.BaseRequestHandler):
             questions.append(question)
         return questions
 
-    def dns_response_header(self, data):
+    @staticmethod
+    def dns_response_header(data):
         """
         Generates DNS response header.
         See http://tools.ietf.org/html/rfc1035 4.1.1. Header section format.
@@ -102,7 +104,8 @@ class DNSHandler(socketserver.BaseRequestHandler):
         header += b'\x00\x00'
         return header
 
-    def dns_response_questions(self, questions):
+    @staticmethod
+    def dns_response_questions(questions):
         """
         Generates DNS response questions.
         See http://tools.ietf.org/html/rfc1035 4.1.2. Question section format.
